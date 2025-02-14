@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(-45deg, #ff1493, #ff69b4, #ff4d94, #ff007f);
+      background-size: 400% 400%;
+      background-attachment: fixed;
+      animation: gradientBG 15s ease infinite;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 40px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 
+        0 0 50px rgba(255, 20, 147, 0.3),
+        0 0 100px rgba(255, 20, 147, 0.2),
+        0 0 150px rgba(255, 20, 147, 0.1);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .title {
+      font-size: 2.5em;
+      background: linear-gradient(45deg, #ff1493, #ff69b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ff1493;
+      font-size: 1.1em;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ff69b4;
+      border-radius: 12px;
+      font-size: 1.1em;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #ff1493;
+      box-shadow: 0 0 15px rgba(255, 20, 147, 0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(45deg, #ff1493, #ff69b4);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 20px rgba(255, 20, 147, 0.4);
+    }
+
+    .error-message {
+      color: #ff1493;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.9em;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .error-message.visible {
+      opacity: 1;
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 30px;
+        width: 95%;
+      }
+      
+      .title {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h1 class="title">Welcome Back</h1>
+    <form id="loginForm" action="/login" method="POST">
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <div id="errorMessage" class="error-message">Invalid password</div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const errorMessage = document.getElementById('errorMessage');
+      
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          window.location.href = '/valentine'; // Redirect to valentine page on success
+        } else {
+          errorMessage.classList.add('visible');
+          setTimeout(() => {
+            errorMessage.classList.remove('visible');
+          }, 3000);
+        }
+      } catch (error) {
+        errorMessage.textContent = 'Connection error. Please try again.';
+        errorMessage.classList.add('visible');
+        setTimeout(() => {
+          errorMessage.classList.remove('visible');
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>

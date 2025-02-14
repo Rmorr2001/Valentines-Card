@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+  @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(-45deg, #ff1493, #ff69b4, #ff4d94, #ff007f);
+      background-size: 400% 400%;
+      background-attachment: fixed;
+      animation: gradientBG 15s ease infinite;
+      font-family: 'Arial', sans-serif;
+      overflow-x: hidden;
+      perspective: 1000px;
+    }
+
+    .envelope {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffd1dc, #ff69b4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: all 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      pointer-events: none;
+    }
+
+    .envelope.open {
+      transform: translateY(300vh) rotate(20deg);
+      z-index: -1;
+    }
+
+
+    .sparkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      animation: sparkle 2s ease-in-out infinite;
+    }
+
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 50%;
+      background: linear-gradient(135deg, #ff69b4, #ff1493);
+      clip-path: polygon(0 0, 50% 50%, 100% 0);
+      transform-origin: top;
+      transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .envelope.open .envelope-flap {
+      transform: rotateX(180deg);
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: clamp(15px, 4vw, 30px);
+      padding: clamp(20px, 4vw, 60px);
+      width: 90%;
+      max-width: 1200px;
+      margin: 5vh auto;
+      box-shadow: 
+        0 0 50px rgba(255, 20, 147, 0.3),
+        0 0 100px rgba(255, 20, 147, 0.2),
+        0 0 150px rgba(255, 20, 147, 0.1);
+      opacity: 0;
+      transform: rotateX(60deg) scale(0.8);
+      transition: all 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      position: relative;
+      z-index: 2;
+    }
+
+    .title {
+      font-size: clamp(2em, 8vw, 5em);
+      background: linear-gradient(45deg, #ff1493, #ff69b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin-bottom: clamp(20px, 4vw, 60px);
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: clamp(10px, 3vw, 40px);
+      margin: clamp(20px, 4vw, 50px) 0;
+    }
+
+    .photo-container {
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      border-radius: clamp(10px, 2vw, 25px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      transform: perspective(1000px);
+      transition: all 0.8s ease;
+    }
+
+    .message {
+      font-size: clamp(1.2em, 4vw, 2em);
+      color: #333;
+      line-height: 1.6;
+      text-align: center;
+      padding: clamp(20px, 4vw, 40px);
+      background: linear-gradient(135deg, rgba(255,235,243,0.9), rgba(255,105,180,0.1));
+      border-radius: clamp(15px, 3vw, 25px);
+      margin: clamp(25px, 4vw, 50px) 0;
+      box-shadow: 0 10px 30px rgba(255,20,147,0.1);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .signature {
+      font-family: 'cursive';
+      font-size: clamp(1.5em, 5vw, 3em);
+      background: linear-gradient(45deg, #ff1493, #ff69b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: right;
+      margin-top: clamp(30px, 5vw, 60px);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: clamp(20px, 4vw, 30px);
+      animation: floatHeart 8s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px rgba(255,20,147,0.5));
+    }
+
+    /* Media queries for specific adjustments */
+    @media (max-width: 768px) {
+      .content-section {
+        margin: 20px 0;
+      }
+      
+      .photo-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .message {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        width: 95%;
+        padding: 20px;
+      }
+      
+      .envelope-flap {
+        height: 40%;
+      }
+    }
+
+    /* Add support for devices that prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .heart, .message, .signature {
+        animation: none;
+      }
+      
+      .card, .envelope {
+        transition-duration: 0.5s;
+      }
+    }
+
+    .card.visible {
+      opacity: 1;
+      transform: rotateX(0) scale(1);
+    }
+
+    .content-section {
+      opacity: 0;
+      transform: translateY(50px) rotateX(-45deg);
+      transition: all 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      position: relative;
+      margin: 40px 0;
+    }
+
+    .content-section.reveal {
+      opacity: 1;
+      transform: translateY(0) rotateX(0);
+    }
+
+    
+    .photo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+
+    @keyframes floatHeart {
+      0% { transform: translateY(0) translateX(0) rotate(0deg) scale(1); }
+      33% { transform: translateY(-100px) translateX(50px) rotate(120deg) scale(1.2); }
+      66% { transform: translateY(-200px) translateX(-50px) rotate(240deg) scale(0.8); }
+      100% { transform: translateY(-300px) translateX(0) rotate(360deg) scale(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="envelope">
+    <div class="envelope-flap"></div>
+  </div>
+
+  <div class="card">
+    <div class="content-section">
+      <h1 class="title">❤️ Happy Valentine's Day! ❤️</h1>
+    </div>
+
+    <div class="content-section">
+      <div class="message">
+        To my incredible Valentine,<br><br>
+        You light up my world like a thousand stars in the night sky.
+        Every moment with you is pure magic, every smile a treasure,
+        and every laugh a melody that plays in my heart...
+      </div>
+    </div>
+
+    <div class="content-section">
+      <div class="photo-grid">
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 1">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 2">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 3">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 4">
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <div class="message">
+        Each day with you is a new adventure, a new chapter in our love story.
+        Here's to creating countless more magical moments together...
+      </div>
+    </div>
+
+    <div class="content-section">
+      <div class="photo-grid">
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 1">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 2">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 3">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 4">
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <div class="message">
+        Each day with you is a new adventure, a new chapter in our love story.
+        Here's to creating countless more magical moments together...
+      </div>
+    </div>
+
+    <div class="content-section">
+      <div class="photo-grid">
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 1">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 2">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 3">
+        </div>
+        <div class="photo-container">
+          <img src="/api/placeholder/600/450" alt="Romantic Memory 4">
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <div class="message">
+        Each day with you is a new adventure, a new chapter in our love story.
+        Here's to creating countless more magical moments together...
+      </div>
+    </div>
+
+    <div class="content-section">
+      <div class="signature">
+        Forever & Always Yours,<br>
+        [Your Name]
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add audio elements
+    let envelopeSound = new Audio('path-to-envelope-sound.mp3');
+    let backgroundMusic = new Audio('path-to-background-music.mp3');
+    backgroundMusic.loop = true;
+
+    // Keep existing sparkles function
+    function createSparkles() {
+      for(let i = 0; i < 50; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = Math.random() * 100 + 'vw';
+        sparkle.style.top = Math.random() * 100 + 'vh';
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(sparkle);
+      }
+    }
+
+    const revealDelay = 800;
+
+    // Modified animation sequence to include audio
+    function startAnimation() {
+      document.querySelector('.envelope').classList.add('open');
+      
+      setTimeout(() => {
+        const card = document.querySelector('.card');
+        card.classList.add('visible');
+        
+        document.querySelectorAll('.content-section').forEach((section, index) => {
+          setTimeout(() => {
+            section.classList.add('reveal');
+          }, revealDelay * (index + 1));
+        });
+
+        setTimeout(startHearts, revealDelay * 6);
+        
+        // Start background music after envelope animation
+        backgroundMusic.play();
+      }, 1500);
+    }
+
+    // Keep existing heart functions
+    function addHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerHTML = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.zIndex = Math.floor(Math.random() * 1000);
+      document.body.appendChild(heart);
+      
+      setTimeout(() => heart.remove(), 8000);
+    }
+
+    function startHearts() {
+      setInterval(addHeart, 1000);
+    }
+
+    // Modified load event to include audio sequence
+    window.addEventListener('load', () => {
+      createSparkles();
+      
+      // Play envelope sound then start animation
+      envelopeSound.play()
+        .then(() => {
+          setTimeout(startAnimation, 1000);
+        })
+        .catch(() => {
+          // If sound fails, just start animation
+          startAnimation();
+        });
+    });
+  </script>
+</body>
+</html>
