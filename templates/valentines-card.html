@@ -38,18 +38,6 @@
       perspective: 1000px;
     }
 
-    .envelope {
-      position: fixed;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(135deg, #ffd1dc, #ff69b4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      transition: all 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      pointer-events: none;
-    }
 
     .envelope.open {
       transform: translateY(300vh) rotate(20deg);
@@ -96,8 +84,21 @@
       opacity: 0;
       transform: rotateX(60deg) scale(0.8);
       transition: all 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      position: relative;
-      z-index: 2;
+      position: fixed; /* Change this from relative */
+      top: 50%; /* Add this */
+      left: 50%; /* Add this */
+      transform: translate(-50%, -50%) rotateX(60deg) scale(0.8); /* Add translate */
+      z-index: 1;
+      visibility: hidden; /* Add this */
+    }
+    
+    .card.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotateX(0) scale(1); /* Update transform */
+      position: relative; /* Change back to relative */
+      top: auto; /* Remove fixed positioning */
+      left: auto;
+      visibility: visible;
     }
 
     .title {
@@ -228,129 +229,226 @@
       66% { transform: translateY(-200px) translateX(-50px) rotate(240deg) scale(0.8); }
       100% { transform: translateY(-300px) translateX(0) rotate(360deg) scale(0); }
     }
+
+    .video-container {
+      width: 100%;
+      margin: 20px 0;
+      border-radius: clamp(15px, 3vw, 25px);
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    .video-container video {
+      width: 100%;
+      display: block;
+    }
+
+    /* Add audio player styling */
+    .audio-player {
+      width: 100%;
+      margin: 20px 0;
+      border-radius: clamp(10px, 2vw, 20px);
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+    }
+
+    /* Add responsive sizing */
+    @media (max-width: 768px) {
+      .video-container, .audio-player {
+        margin: 10px 0;
+      }
+    }
+
+    .envelope {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffd1dc, #ff69b4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      transition: all 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .envelope.open {
+      transform: translateY(300vh) rotate(20deg);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .start-button {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2000;
+      padding: 20px 40px;
+      font-size: 24px;
+      background: linear-gradient(45deg, #ff1493, #ff69b4);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
+      transition: all 0.3s ease;
+      opacity: 1;
+    }
+
+    .start-button:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+      box-shadow: 0 8px 20px rgba(255, 20, 147, 0.4);
+    }
+
+    .start-button.hidden {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.8);
+      pointer-events: none;
+      transition: all 0.5s ease;
+    }
   </style>
 </head>
 <body>
+  
+  <audio id="background-music" loop>
+    <source src="{{ url_for('static', filename='styles/Twice.mp3') }}" type="audio/mpeg">
+  </audio>
+
+  <button id="start-button" class="start-button">Click to Start ❤️</button>
+
   <div class="envelope">
     <div class="envelope-flap"></div>
   </div>
 
+  
+
   <div class="card">
     <div class="content-section">
-      <h1 class="title">❤️ Happy Valentine's Day! ❤️</h1>
+      <h1 class="title">❤️ To my dearest valentine! ❤️</h1>
     </div>
 
     <div class="content-section">
       <div class="message">
-        To my incredible Valentine,<br><br>
-        You light up my world like a thousand stars in the night sky.
-        Every moment with you is pure magic, every smile a treasure,
-        and every laugh a melody that plays in my heart...
+        To my dearest Valentine,<br><br>
+        I figured it was about time to make a site that celebrates my beautiful
+        girlfriend... It's a lot of pictures of you that remind me of you! and I've got
+        a couple 'o' sweet messages in here. I love you so much!
       </div>
     </div>
 
     <div class="content-section">
       <div class="photo-grid">
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 1">
+          <img src="{{url_for('static', filename='styles/1.jpeg')}}" alt="Romantic Memory 1">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 2">
+          <img src="{{url_for('static', filename='styles/2.jpeg')}}" alt="Romantic Memory 2">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 3">
+          <img src="{{url_for('static', filename='styles/3.jpeg')}}" alt="Romantic Memory 3">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 4">
+          <img src="{{url_for('static', filename='styles/4.jpeg')}}" alt="Romantic Memory 4">
         </div>
       </div>
     </div>
 
     <div class="content-section">
       <div class="message">
-        Each day with you is a new adventure, a new chapter in our love story.
-        Here's to creating countless more magical moments together...
+        These past couple days I've especially been enjoying our time together :)
+        You've been taking really good care of me and it's been really chill!
+        It'd be swag to spend the rest of life taking care of eachother and taking care of business!
+        - just a thought!
       </div>
     </div>
 
     <div class="content-section">
       <div class="photo-grid">
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 1">
+          <img src="{{url_for('static', filename='styles/5.jpeg')}}" alt="Romantic Memory 1">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 2">
+          <img src="{{url_for('static', filename='styles/6.jpeg')}}" alt="Romantic Memory 2">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 3">
+          <img src="{{url_for('static', filename='styles/7.jpeg')}}" alt="Romantic Memory 3">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 4">
+          <img src="{{url_for('static', filename='styles/8.jpeg')}}" alt="Romantic Memory 4">
         </div>
       </div>
     </div>
 
     <div class="content-section">
       <div class="message">
-        Each day with you is a new adventure, a new chapter in our love story.
-        Here's to creating countless more magical moments together...
+        Q: The best thing about Kendall?<br></br>
+        A: Her sense of humor, she makes me laugh a lot!
+        Q: Best memory together?<br></br>
+        A: Today, this moment right now,
+        and then all the future moments after this!
+        Q: What has been a swag moment of 2025?<br></br>
+        A: Skiing! ⛷️ My babygirl was so good at it!
       </div>
     </div>
 
     <div class="content-section">
       <div class="photo-grid">
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 1">
+          <img src="{{url_for('static', filename='styles/10.jpeg')}}" alt="Romantic Memory 1">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 2">
+          <img src="{{url_for('static', filename='styles/12.jpeg')}}" alt="Romantic Memory 2">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 3">
+          <img src="{{url_for('static', filename='styles/15.jpeg')}}" alt="Romantic Memory 3">
         </div>
         <div class="photo-container">
-          <img src="/api/placeholder/600/450" alt="Romantic Memory 4">
+          <img src="{{url_for('static', filename='styles/14.jpeg')}}" alt="Romantic Memory 4">
         </div>
       </div>
     </div>
 
     <div class="content-section">
       <div class="message">
-        Each day with you is a new adventure, a new chapter in our love story.
-        Here's to creating countless more magical moments together...
+       I would learn how to do anything for YOU,
+       You been giving me some good loving and you deserve the best loving! <br></br>
+       You keep loving me such, and being sweet, and I will keep love you so much and keep being sweet!
+       Valentines day is such a sweet holiday for celebrating us!
       </div>
     </div>
 
     <div class="content-section">
       <div class="signature">
         Forever & Always Yours,<br>
-        [Your Name]
+        Mr. RJ Morrison!
       </div>
     </div>
   </div>
 
   <script>
-    // Add audio elements
-    let envelopeSound = new Audio('path-to-envelope-sound.mp3');
-    let backgroundMusic = new Audio('path-to-background-music.mp3');
-    backgroundMusic.loop = true;
-
-    // Keep existing sparkles function
-    function createSparkles() {
-      for(let i = 0; i < 50; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.style.left = Math.random() * 100 + 'vw';
-        sparkle.style.top = Math.random() * 100 + 'vh';
-        sparkle.style.animationDelay = Math.random() * 2 + 's';
-        document.body.appendChild(sparkle);
+    const backgroundMusic = document.getElementById('background-music');
+    const startButton = document.getElementById('start-button');
+    const revealDelay = 600;
+    
+    let isMuted = false;
+    
+    function toggleSound() {
+      if (isMuted) {
+        backgroundMusic.volume = 1;
+        isMuted = false;
+      } else {
+        backgroundMusic.volume = 0;
+        isMuted = true;
       }
     }
 
-    const revealDelay = 800;
-
-    // Modified animation sequence to include audio
     function startAnimation() {
+      // Hide the start button
+      startButton.classList.add('hidden');
+      
+      // Play music
+      backgroundMusic.play();
+      
       document.querySelector('.envelope').classList.add('open');
       
       setTimeout(() => {
@@ -364,13 +462,21 @@
         });
 
         setTimeout(startHearts, revealDelay * 6);
-        
-        // Start background music after envelope animation
-        backgroundMusic.play();
       }, 1500);
     }
 
-    // Keep existing heart functions
+    // Create sparkles immediately
+    function createSparkles() {
+      for(let i = 0; i < 50; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = Math.random() * 100 + 'vw';
+        sparkle.style.top = Math.random() * 100 + 'vh';
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(sparkle);
+      }
+    }
+
     function addHeart() {
       const heart = document.createElement('div');
       heart.className = 'heart';
@@ -386,19 +492,11 @@
       setInterval(addHeart, 1000);
     }
 
-    // Modified load event to include audio sequence
+    // Modified load event to wait for button click
     window.addEventListener('load', () => {
       createSparkles();
-      
-      // Play envelope sound then start animation
-      envelopeSound.play()
-        .then(() => {
-          setTimeout(startAnimation, 1000);
-        })
-        .catch(() => {
-          // If sound fails, just start animation
-          startAnimation();
-        });
+      // Wait for button click instead of auto-starting
+      startButton.addEventListener('click', startAnimation);
     });
   </script>
 </body>
